@@ -2,14 +2,18 @@
     "name": "Slaughterhouse",
     "author": "icedcave and more",
     "creators": ["icedcave"],
-    "verifier": "NaR1",
-    "country": "ua",
+    "verifier": "Doggie",
+    "country": "us",
     "verification": "https://www.youtube.com/watch?v=ooxNXR_QDMQ",
-    "avatar": "https://i.pinimg.com/originals/b9/78/a2/b978a2def64d881e6fa1e54690691333.jpg",
     "percentToQualify": 40,
     "password": "Free Copy",
     "records": [
         {
+            "user": "NaR1",
+            "link": "",
+            "percent": 100,
+            "country": "ua",
+            "hz": 120  
         }
     ]
 }
