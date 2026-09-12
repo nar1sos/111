@@ -9,7 +9,7 @@ export default {
         </main>
 
         <div v-else class="gdl-wrapper">
-            <!-- 1. ПОИСК -->
+            <!-- ПОИСК -->
             <div class="gdl-search-bar">
                 <div class="search-input-wrapper">
                     <span class="search-icon">🔍</span>
@@ -23,10 +23,10 @@ export default {
                 </div>
             </div>
 
-            <!-- 2. ТРЁХКОЛОНОЧНАЯ СЕТКА -->
+            <!-- СЕТКА -->
             <div class="gdl-content-grid">
                 
-                <!-- ЛЕВАЯ КОЛОНКА: ИНФО / РЕДАКТОРЫ / ПРАВИЛА -->
+                <!-- ЛЕВАЯ КОЛОНКА -->
                 <div class="gdl-left-column">
                     <div class="gdl-meta-box">
                         <h3>List Editors</h3>
@@ -49,7 +49,7 @@ export default {
                     </div>
                 </div>
 
-                <!-- ЦЕНТРАЛЬНАЯ КОЛОНКА: СПИСОК УРОВНЕЙ -->
+                <!-- ЦЕНТРАЛЬНАЯ КОЛОНКА -->
                 <div class="gdl-cards-container">
                     <div 
                         v-for="level in filteredList" 
@@ -83,7 +83,7 @@ export default {
                     </div>
                 </div>
 
-                <!-- ПРАВАЯ КОЛОНКА: ДЕТАЛИ ВЫБРАННОГО УРОВНЯ -->
+                <!-- ПРАВАЯ КОЛОНКА -->
                 <div class="gdl-details-container" v-if="selectedLevel">
                     <div class="gdl-level-detail-box">
                         <h2 class="detail-title">#{{ selectedLevel.rank }} {{ selectedLevel.name }}</h2>
