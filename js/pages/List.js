@@ -26,7 +26,7 @@ export default {
             <!-- 2. ТРЁХКОЛОНОЧНАЯ СЕТКА -->
             <div class="gdl-content-grid">
                 
-                <!-- ЛЕВАЯ КОЛОНКА: РЕДАКТОРЫ / ПРАВИЛА -->
+                <!-- ЛЕВАЯ КОЛОНКА: ИНФО / РЕДАКТОРЫ / ПРАВИЛА -->
                 <div class="gdl-left-column">
                     <div class="gdl-meta-box">
                         <h3>List Editors</h3>
