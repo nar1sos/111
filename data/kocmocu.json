@@ -29,6 +29,13 @@
             "percent": 100,
             "country": "de",
             "hz": 120  
+        },
+        {
+            "user": "Zoink",
+            "link": "",
+            "percent": 100,
+            "country": "us",
+            "hz": 120  
         }
     ]
 }
