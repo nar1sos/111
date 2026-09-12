@@ -19,7 +19,7 @@
         {
             "user": "teraaa",
             "link": "",
-            "percent": 91,
+            "percent": 100,
             "country": "kz",
             "hz": 120  
         },
@@ -35,6 +35,20 @@
             "link": "",
             "percent": 100,
             "country": "us",
+            "hz": 120  
+        },
+        {
+            "user": "Doggie",
+            "link": "",
+            "percent": 58,
+            "country": "us",
+            "hz": 120  
+        }
+        {
+            "user": "NaR1",
+            "link": "",
+            "percent": 74,
+            "country": "ua",
             "hz": 120  
         }
     ]
