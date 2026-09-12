@@ -14,6 +14,13 @@
             "country": "us",
             "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSk2pkqu7BdZ8jGi090ZxfnOGbm1nCmLaHEapRXid0hwwu_H5VMgqkXcG0m&s=10",
             "hz": 120
+        },
+        {
+            "user": "Mizukii",
+            "link": "",
+            "percent": 100,
+            "country": "de",
+            "hz": 120
         }
     ]
 }
