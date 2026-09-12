@@ -1,4 +1,4 @@
-// Функция загрузки списка уровней (_list.json)
+// Загрузка списка уровней (_list.json)
 export async function fetchList() {
     try {
         const listReq = await fetch('./data/_list.json');
@@ -30,7 +30,7 @@ export async function fetchList() {
     }
 }
 
-// Функция загрузки редакторов (_editors.json)
+// Загрузка редакторов (_editors.json)
 export async function fetchEditors() {
     try {
         const res = await fetch('./data/_editors.json');
@@ -42,7 +42,7 @@ export async function fetchEditors() {
     }
 }
 
-// Функция загрузки лидерборда
+// Генерация лидерборда игроков
 export async function fetchLeaderboard() {
     try {
         const playersMap = {};
