@@ -1,155 +1,189 @@
-import { score } from "./score.js";
-
-function getSafeScore(rank, percent, minPercent) {
-    try {
-        if (typeof score === 'function') {
-            const val = score(rank, percent, minPercent);
-            return isNaN(val) ? 0 : val;
-        }
-    } catch (e) {
-        console.warn("Ошибка в функции score():", e);
-    }
-    return percent === 100 ? Math.max(100 - rank, 10) : 0;
-}
-
+// Функция загрузки списка уровней (_list.json)
 export async function fetchList() {
     try {
-        const listResponse = await fetch("/data/_list.json");
-        if (!listResponse.ok) return [];
-        const list = await listResponse.json();
+        const listReq = await fetch('./data/_list.json');
+        if (!listReq.ok) return [];
+        const levelFiles = await listReq.json();
 
-        const results = await Promise.all(
-            list.map(async (path, index) => {
-                const rank = index + 1;
+        const list = await Promise.all(
+            levelFiles.map(async (file, index) => {
                 try {
-                    const levelResponse = await fetch(`/data/${path}.json`);
-                    if (!levelResponse.ok) {
-                        console.error(`Не удалось загрузить файл уровня: /data/${path}.json`);
-                        return null;
-                    }
-                    const level = await levelResponse.json();
-                    return [
-                        {
-                            ...level,
-                            path,
-                            records: Array.isArray(level.records) ? level.records : [],
-                        },
-                        rank,
-                    ];
+                    const res = await fetch(`./data/${file}.json`);
+                    if (!res.ok) return null;
+                    const data = await res.json();
+                    return {
+                        ...data,
+                        rank: index + 1,
+                        path: file
+                    };
                 } catch (e) {
-                    console.error(`Ошибка синтаксиса JSON в файле /data/${path}.json:`, e);
+                    console.error(`Error loading level ${file}:`, e);
                     return null;
                 }
             })
         );
 
-        return results.filter(item => item !== null);
+        return list.filter(item => item !== null);
     } catch (e) {
-        console.error("Ошибка загрузки /data/_list.json:", e);
+        console.error("Error in fetchList:", e);
         return [];
     }
 }
 
+// Функция загрузки редакторов (_editors.json)
 export async function fetchEditors() {
     try {
-        const response = await fetch("/data/_editors.json");
-        if (!response.ok) return [];
-        return await response.json();
+        const res = await fetch('./data/_editors.json');
+        if (!res.ok) return [];
+        return await res.json();
     } catch (e) {
+        console.warn("Файл _editors.json не найден или поврежден:", e);
         return [];
     }
 }
 
+// Функция генерации и загрузки Лидерборда
 export async function fetchLeaderboard() {
-    const list = await fetchList();
-    const scoreMap = {};
+    try {
+        const playersMap = {};
 
-    list.forEach(([level, rank]) => {
-        if (!level) return;
+        // Список возможных путей к файлу с игроками
+        const possiblePlayerFiles = [
+            './data/_players.json',
+            './data/_leaderboard.json',
+            './data/players.json',
+            './data/leaderboard.json',
+            './data/_users.json'
+        ];
 
-        const levelName = level.name || level.path;
-        const allRecords = [...(level.records || [])];
+        let staticPlayers = [];
 
-        // Добавляем верификатора как игрока
-        if (level.verifier) {
-            const verifierName = level.verifier;
-            
-            if (!scoreMap[verifierName]) {
-                scoreMap[verifierName] = {
-                    user: verifierName,
-                    nationality: level.verifierNationality || level.nationality || level.country || null,
-                    avatar: level.verifierAvatar || level.avatar || null,
-                    totalScore: 0,
-                    hardest: null,
-                    hardestRank: Infinity,
-                    records: [],
-                    verified: []
-                };
-            }
-
-            // Добавляем уровень в список верифицированных
-            if (!scoreMap[verifierName].verified.includes(levelName)) {
-                scoreMap[verifierName].verified.push(levelName);
-            }
-
-            const hasVerifierRecord = allRecords.some(r => r.user === verifierName);
-            if (!hasVerifierRecord) {
-                allRecords.push({
-                    user: verifierName,
-                    percent: 100,
-                    nationality: level.verifierNationality || level.nationality || level.country || null,
-                    avatar: level.verifierAvatar || level.avatar || null
-                });
+        for (const filePath of possiblePlayerFiles) {
+            try {
+                const res = await fetch(filePath);
+                if (res.ok) {
+                    staticPlayers = await res.json();
+                    break;
+                }
+            } catch (err) {
+                // Файл не найден, переходим к следующему
             }
         }
 
-        for (const record of allRecords) {
-            const user = record.user;
-            if (!user) continue;
-
-            const flag = record.nationality || record.country || null;
-            const avatar = record.avatar || null;
-
-            if (!scoreMap[user]) {
-                scoreMap[user] = {
-                    user: user,
-                    nationality: flag,
-                    avatar: avatar,
-                    totalScore: 0,
-                    hardest: null,
-                    hardestRank: Infinity,
-                    records: [],
-                    verified: []
+        if (Array.isArray(staticPlayers)) {
+            staticPlayers.forEach(p => {
+                const name = p.name || p.user || p.username;
+                if (!name) return;
+                
+                playersMap[name] = {
+                    user: name,
+                    country: p.country || p.nationality || p.nation || null,
+                    avatar: p.avatar || p.icon || null,
+                    verified: Array.isArray(p.verified) ? p.verified : [],
+                    records: Array.isArray(p.records) ? p.records : [],
+                    ...p
                 };
-            }
+            });
+        }
 
-            if (!scoreMap[user].nationality && flag) {
-                scoreMap[user].nationality = flag;
-            }
-            if (!scoreMap[user].avatar && avatar) {
-                scoreMap[user].avatar = avatar;
-            }
+        // Собираем рекорды и верификации прямо из JSON-файлов уровней
+        try {
+            const listReq = await fetch('./data/_list.json');
+            if (listReq.ok) {
+                const levelFiles = await listReq.json();
 
-            const points = getSafeScore(rank, Number(record.percent), level.percentToQualify || 100);
-            scoreMap[user].totalScore += points;
+                for (const file of levelFiles) {
+                    try {
+                        const res = await fetch(`./data/${file}.json`);
+                        if (!res.ok) continue;
+                        const levelData = await res.json();
 
-            if (Number(record.percent) === 100) {
-                if (rank < scoreMap[user].hardestRank) {
-                    scoreMap[user].hardestRank = rank;
-                    scoreMap[user].hardest = levelName;
+                        // Чтение верификатора
+                        if (levelData.verifier) {
+                            const vName = levelData.verifier;
+                            if (!playersMap[vName]) {
+                                playersMap[vName] = {
+                                    user: vName,
+                                    country: levelData.verifierCountry || levelData.country || null,
+                                    verified: [],
+                                    records: []
+                                };
+                            }
+                            if (!playersMap[vName].country && (levelData.verifierCountry || levelData.country)) {
+                                playersMap[vName].country = levelData.verifierCountry || levelData.country;
+                            }
+                            const levelName = levelData.name || file;
+                            if (!playersMap[vName].verified.includes(levelName)) {
+                                playersMap[vName].verified.push(levelName);
+                            }
+                        }
+
+                        // Чтение рекордов
+                        if (Array.isArray(levelData.records)) {
+                            for (const rec of levelData.records) {
+                                const pName = rec.user || rec.name;
+                                if (!pName) continue;
+
+                                if (!playersMap[pName]) {
+                                    playersMap[pName] = {
+                                        user: pName,
+                                        country: rec.country || rec.nationality || rec.nation || null,
+                                        avatar: rec.avatar || null,
+                                        verified: [],
+                                        records: []
+                                    };
+                                }
+
+                                if (!playersMap[pName].country && (rec.country || rec.nationality || rec.nation)) {
+                                    playersMap[pName].country = rec.country || rec.nationality || rec.nation;
+                                }
+
+                                const levelName = levelData.name || file;
+                                const exists = playersMap[pName].records.some(
+                                    r => (typeof r === 'string' ? r : r.levelName) === levelName
+                                );
+
+                                if (!exists) {
+                                    playersMap[pName].records.push({
+                                        levelName: levelName,
+                                        percent: rec.percent || 100,
+                                        hz: rec.hz || 60,
+                                        link: rec.link || '',
+                                        country: rec.country || rec.nationality || rec.nation || null
+                                    });
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        console.error(`Ошибка обработки уровня ${file}:`, err);
+                    }
                 }
             }
-
-            const alreadyHasLevel = scoreMap[user].records.some(r => r.levelName === levelName);
-            if (!alreadyHasLevel) {
-                scoreMap[user].records.push({
-                    levelName: levelName,
-                    percent: Number(record.percent),
-                    rank: rank
-                });
-            }
+        } catch (err) {
+            console.error("Ошибка при сборе данных из _list.json:", err);
         }
-    });
 
-    return Object.values(scoreMap).sort((a, b) => b.totalScore - a.totalScore);
+        const leaderboard = Object.values(playersMap);
+
+        // Сортировка по очкам
+        leaderboard.sort((a, b) => {
+            const scoreA = (a.verified ? a.verified.length * 2 : 0) + (a.records ? a.records.length : 0);
+            const scoreB = (b.verified ? b.verified.length * 2 : 0) + (b.records ? b.records.length : 0);
+            return scoreB - scoreA;
+        });
+
+        // Определение сложнейшего уровня
+        leaderboard.forEach(p => {
+            if (p.verified && p.verified.length > 0) {
+                p.hardest = typeof p.verified[0] === 'string' ? p.verified[0] : p.verified[0].levelName;
+            } else if (p.records && p.records.length > 0) {
+                p.hardest = typeof p.records[0] === 'string' ? p.records[0] : p.records[0].levelName;
+            }
+        });
+
+        return leaderboard;
+    } catch (e) {
+        console.error("Ошибка генерации лидерборда:", e);
+        return [];
+    }
 }
