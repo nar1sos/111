@@ -37,17 +37,16 @@ export async function fetchEditors() {
         if (!res.ok) return [];
         return await res.json();
     } catch (e) {
-        console.warn("Файл _editors.json не найден или поврежден:", e);
+        console.warn("Файл _editors.json не найден:", e);
         return [];
     }
 }
 
-// Функция генерации и загрузки Лидерборда
+// Функция загрузки лидерборда
 export async function fetchLeaderboard() {
     try {
         const playersMap = {};
 
-        // Список возможных путей к файлу с игроками
         const possiblePlayerFiles = [
             './data/_players.json',
             './data/_leaderboard.json',
@@ -65,9 +64,7 @@ export async function fetchLeaderboard() {
                     staticPlayers = await res.json();
                     break;
                 }
-            } catch (err) {
-                // Файл не найден, переходим к следующему
-            }
+            } catch (err) {}
         }
 
         if (Array.isArray(staticPlayers)) {
@@ -86,7 +83,6 @@ export async function fetchLeaderboard() {
             });
         }
 
-        // Собираем рекорды и верификации прямо из JSON-файлов уровней
         try {
             const listReq = await fetch('./data/_list.json');
             if (listReq.ok) {
@@ -98,7 +94,6 @@ export async function fetchLeaderboard() {
                         if (!res.ok) continue;
                         const levelData = await res.json();
 
-                        // Чтение верификатора
                         if (levelData.verifier) {
                             const vName = levelData.verifier;
                             if (!playersMap[vName]) {
@@ -118,7 +113,6 @@ export async function fetchLeaderboard() {
                             }
                         }
 
-                        // Чтение рекордов
                         if (Array.isArray(levelData.records)) {
                             for (const rec of levelData.records) {
                                 const pName = rec.user || rec.name;
@@ -154,25 +148,19 @@ export async function fetchLeaderboard() {
                                 }
                             }
                         }
-                    } catch (err) {
-                        console.error(`Ошибка обработки уровня ${file}:`, err);
-                    }
+                    } catch (err) {}
                 }
             }
-        } catch (err) {
-            console.error("Ошибка при сборе данных из _list.json:", err);
-        }
+        } catch (err) {}
 
         const leaderboard = Object.values(playersMap);
 
-        // Сортировка по очкам
         leaderboard.sort((a, b) => {
             const scoreA = (a.verified ? a.verified.length * 2 : 0) + (a.records ? a.records.length : 0);
             const scoreB = (b.verified ? b.verified.length * 2 : 0) + (b.records ? b.records.length : 0);
             return scoreB - scoreA;
         });
 
-        // Определение сложнейшего уровня
         leaderboard.forEach(p => {
             if (p.verified && p.verified.length > 0) {
                 p.hardest = typeof p.verified[0] === 'string' ? p.verified[0] : p.verified[0].levelName;
@@ -183,7 +171,7 @@ export async function fetchLeaderboard() {
 
         return leaderboard;
     } catch (e) {
-        console.error("Ошибка генерации лидерборда:", e);
+        console.error("Error in fetchLeaderboard:", e);
         return [];
     }
 }
