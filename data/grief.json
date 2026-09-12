@@ -24,6 +24,13 @@
             "country": "de",
             "avatar": "https://yt3.googleusercontent.com/pBVc38U5WxwQB7pwysS-z7SgZM2qIurz13BiaJQVbvjB36cMn5rD_HrnN5zoRvLSc_zFA6Vj1w=s160-c-k-c0x00ffffff-no-rj",
             "hz": 120  
+        },
+        {
+            "user": "a6",
+            "link": "",
+            "percent": 100,
+            "country": "ru",
+            "hz": 120  
         }
     ]
 }
