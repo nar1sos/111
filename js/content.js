@@ -1,3 +1,17 @@
+// Функция извлечения YouTube ID из любых ссылок
+function parseYoutubeId(urlOrId) {
+    if (!urlOrId) return '';
+    if (typeof urlOrId !== 'string') return '';
+    
+    const str = urlOrId.trim();
+    if (str.length === 11 && !str.includes('/') && !str.includes('.')) {
+        return str;
+    }
+    const regExp = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/;
+    const match = str.match(regExp);
+    return (match && match[1]) ? match[1] : '';
+}
+
 // Загрузка списка уровней (_list.json)
 export async function fetchList() {
     try {
@@ -11,8 +25,12 @@ export async function fetchList() {
                     const res = await fetch(`./data/${file}.json`);
                     if (!res.ok) return null;
                     const data = await res.json();
+                    
+                    const rawYt = data.verification || data.ytid || data.video || data.link || data.youtube || '';
+                    
                     return {
                         ...data,
+                        ytid: parseYoutubeId(rawYt),
                         rank: index + 1,
                         path: file
                     };
@@ -42,109 +60,137 @@ export async function fetchEditors() {
     }
 }
 
-// Генерация лидерборда игроков
+// Загрузка и генерация лидерборда игроков
 export async function fetchLeaderboard() {
     try {
         const playersMap = {};
+        const playerOrder = [];
 
-        const possiblePlayerFiles = [
-            './data/_players.json',
-            './data/_leaderboard.json',
-            './data/players.json',
-            './data/leaderboard.json',
-            './data/_users.json'
-        ];
+        const registerPlayer = (rawName) => {
+            if (!rawName) return null;
+            const name = String(rawName).trim();
+            if (!name) return null;
 
-        let staticPlayers = [];
-
-        for (const filePath of possiblePlayerFiles) {
-            try {
-                const res = await fetch(filePath);
-                if (res.ok) {
-                    staticPlayers = await res.json();
-                    break;
-                }
-            } catch (err) {}
-        }
-
-        if (Array.isArray(staticPlayers)) {
-            staticPlayers.forEach(p => {
-                const name = p.name || p.user || p.username;
-                if (!name) return;
-                
+            if (!playersMap[name]) {
                 playersMap[name] = {
                     user: name,
-                    country: p.country || p.nationality || p.nation || null,
-                    avatar: p.avatar || p.icon || null,
-                    verified: Array.isArray(p.verified) ? p.verified : [],
-                    records: Array.isArray(p.records) ? p.records : [],
-                    ...p
+                    name: name,
+                    country: null,
+                    avatar: null,
+                    verified: [],
+                    records: []
                 };
-            });
+            }
+            return playersMap[name];
+        };
+
+        // 1. Загружаем главный файл с топом (players.json) — фиксируем порядок
+        try {
+            const res = await fetch('./data/players.json');
+            if (res.ok) {
+                const data = await res.json();
+                const list = Array.isArray(data) ? data : (data.players || data.users || []);
+                
+                list.forEach(p => {
+                    const name = typeof p === 'string' ? p : (p.name || p.user || p.username || p.player);
+                    if (name) {
+                        registerPlayer(name);
+                        if (!playerOrder.includes(name)) {
+                            playerOrder.push(name);
+                        }
+                    }
+                });
+            }
+        } catch (err) {
+            console.error("Ошибка загрузки players.json:", err);
         }
 
+        // 2. Читаем profiles.json (формат объекта {"CAWET": {avatar, nationality}})
+        try {
+            const res = await fetch('./data/profiles.json');
+            if (res.ok) {
+                const data = await res.json();
+                if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
+                    Object.keys(data).forEach(playerName => {
+                        const pData = data[playerName];
+                        const pObj = registerPlayer(playerName);
+                        if (pObj && pData) {
+                            if (pData.avatar) pObj.avatar = pData.avatar;
+                            if (pData.nationality || pData.country || pData.nation) {
+                                pObj.country = pData.nationality || pData.country || pData.nation;
+                            }
+                        }
+                    });
+                }
+            }
+        } catch (err) {
+            console.error("Ошибка загрузки profiles.json:", err);
+        }
+
+        // 3. Сканируем файлы уровней и забираем рекорды и недостающие аватарки
         try {
             const listReq = await fetch('./data/_list.json');
             if (listReq.ok) {
                 const levelFiles = await listReq.json();
 
-                for (const file of levelFiles) {
+                for (let index = 0; index < levelFiles.length; index++) {
+                    const file = levelFiles[index];
+                    const rank = index + 1;
+
                     try {
                         const res = await fetch(`./data/${file}.json`);
                         if (!res.ok) continue;
                         const levelData = await res.json();
+                        const levelName = levelData.name || file;
 
+                        // Верификатор уровня
                         if (levelData.verifier) {
-                            const vName = levelData.verifier;
-                            if (!playersMap[vName]) {
-                                playersMap[vName] = {
-                                    user: vName,
-                                    country: levelData.verifierCountry || levelData.country || null,
-                                    verified: [],
-                                    records: []
-                                };
-                            }
-                            if (!playersMap[vName].country && (levelData.verifierCountry || levelData.country)) {
-                                playersMap[vName].country = levelData.verifierCountry || levelData.country;
-                            }
-                            const levelName = levelData.name || file;
-                            if (!playersMap[vName].verified.includes(levelName)) {
-                                playersMap[vName].verified.push(levelName);
+                            const pObj = registerPlayer(levelData.verifier);
+                            if (pObj) {
+                                if (!pObj.avatar && (levelData.verifierAvatar || levelData.avatar)) {
+                                    pObj.avatar = levelData.verifierAvatar || levelData.avatar;
+                                }
+                                if (!pObj.country && (levelData.verifierCountry || levelData.country)) {
+                                    pObj.country = levelData.verifierCountry || levelData.country;
+                                }
+
+                                const exists = pObj.verified.some(
+                                    v => (typeof v === 'string' ? v : v.levelName) === levelName
+                                );
+                                if (!exists) {
+                                    pObj.verified.push({ levelName, rank });
+                                }
                             }
                         }
 
+                        // Рекорды на уровне
                         if (Array.isArray(levelData.records)) {
                             for (const rec of levelData.records) {
-                                const pName = rec.user || rec.name;
-                                if (!pName) continue;
+                                const recUser = rec.user || rec.name || rec.username;
+                                if (!recUser) continue;
 
-                                if (!playersMap[pName]) {
-                                    playersMap[pName] = {
-                                        user: pName,
-                                        country: rec.country || rec.nationality || rec.nation || null,
-                                        avatar: rec.avatar || null,
-                                        verified: [],
-                                        records: []
-                                    };
-                                }
+                                const pObj = registerPlayer(recUser);
+                                if (pObj) {
+                                    if (!pObj.avatar && rec.avatar) {
+                                        pObj.avatar = rec.avatar;
+                                    }
+                                    if (!pObj.country && (rec.country || rec.nationality)) {
+                                        pObj.country = rec.country || rec.nationality;
+                                    }
 
-                                if (!playersMap[pName].country && (rec.country || rec.nationality || rec.nation)) {
-                                    playersMap[pName].country = rec.country || rec.nationality || rec.nation;
-                                }
+                                    const exists = pObj.records.some(
+                                        r => (typeof r === 'string' ? r : r.levelName) === levelName
+                                    );
 
-                                const levelName = levelData.name || file;
-                                const exists = playersMap[pName].records.some(
-                                    r => (typeof r === 'string' ? r : r.levelName) === levelName
-                                );
-
-                                if (!exists) {
-                                    playersMap[pName].records.push({
-                                        levelName: levelName,
-                                        percent: rec.percent || 100,
-                                        hz: rec.hz || 60,
-                                        link: rec.link || '',
-                                        country: rec.country || rec.nationality || rec.nation || null
-                                    });
+                                    if (!exists) {
+                                        pObj.records.push({
+                                            levelName,
+                                            percent: rec.percent || 100,
+                                            hz: rec.hz || 60,
+                                            link: rec.link || rec.video || '',
+                                            rank
+                                        });
+                                    }
                                 }
                             }
                         }
@@ -153,23 +199,33 @@ export async function fetchLeaderboard() {
             }
         } catch (err) {}
 
-        const leaderboard = Object.values(playersMap);
+        // 4. Формируем итоговый список игроков в порядке из players.json
+        return playerOrder.map(name => {
+            const p = playersMap[name];
+            let hardestItem = null;
 
-        leaderboard.sort((a, b) => {
-            const scoreA = (a.verified ? a.verified.length * 2 : 0) + (a.records ? a.records.length : 0);
-            const scoreB = (b.verified ? b.verified.length * 2 : 0) + (b.records ? b.records.length : 0);
-            return scoreB - scoreA;
-        });
-
-        leaderboard.forEach(p => {
-            if (p.verified && p.verified.length > 0) {
-                p.hardest = typeof p.verified[0] === 'string' ? p.verified[0] : p.verified[0].levelName;
-            } else if (p.records && p.records.length > 0) {
-                p.hardest = typeof p.records[0] === 'string' ? p.records[0] : p.records[0].levelName;
+            if (Array.isArray(p.verified)) {
+                p.verified.forEach(v => {
+                    const rank = typeof v === 'object' && v.rank ? v.rank : 9999;
+                    const levelName = typeof v === 'object' ? v.levelName : v;
+                    if (!hardestItem || rank < hardestItem.rank) hardestItem = { levelName, rank };
+                });
             }
-        });
 
-        return leaderboard;
+            if (Array.isArray(p.records)) {
+                p.records.forEach(r => {
+                    const rank = typeof r === 'object' && r.rank ? r.rank : 9999;
+                    const levelName = typeof r === 'object' ? r.levelName : r;
+                    const percent = typeof r === 'object' && r.percent !== undefined ? r.percent : 100;
+                    if (percent === 100 && (!hardestItem || rank < hardestItem.rank)) {
+                        hardestItem = { levelName, rank };
+                    }
+                });
+            }
+
+            p.hardest = hardestItem ? hardestItem.levelName : 'None';
+            return p;
+        });
     } catch (e) {
         console.error("Error in fetchLeaderboard:", e);
         return [];
