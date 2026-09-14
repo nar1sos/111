@@ -2,19 +2,12 @@
     "name": "Unnerfed Sakupen Circles",
     "author": "icedcave",
     "creators": ["icedcave"],
-    "verifier": "Kurumi",
+    "verifier": "Bacon",
     "verification": "https://www.youtube.com/watch?v=_ea8mbSfZvA",
     "percentToQualify": 40,
-    "country": "ru",
-    "avatar": "https://yt3.googleusercontent.com/ytc/AIdro_nOIMQrkX7WAHjc81ikZUEhywoq2ci0trThhcIpNPlo8w=s160-c-k-c0x00ffffff-no-rj",
     "password": "Free Copy",
     "records": [
         {
-            "user": "Zoink",
-            "link": "",
-            "percent": 100,
-            "country": "us",
-            "hz": 120
         }
     ]
 }
