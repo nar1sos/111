@@ -29,6 +29,13 @@
             "percent": 100,
             "country": "us",
             "hz": 120  
+        },
+        {
+            "user": "Cursed",
+            "link": "",
+            "percent": 100,
+            "country": "us",
+            "hz": 120  
         }
     ]
 }
