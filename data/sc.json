@@ -2,9 +2,11 @@
     "name": "Sakupen Circles",
     "author": "BemBem",
     "creators": ["Bembem"],
-    "verifier": "NaR1",
+    "verifier": "Cursed",
     "verification": "https://www.youtube.com/watch?v=zCJrhYTjqMo",
     "percentToQualify": 40,
+    "country": "us",
+    "avatar": "https://geometrydash.wiki.gg/images/New_Cursed.png?263e70",
     "password": "Free Copy",
     "records": [
         {
@@ -16,10 +18,10 @@
             "hz": 120
         },
         {
-            "user": "Mizukii",
+            "user": "Doggie",
             "link": "",
             "percent": 100,
-            "country": "de",
+            "country": "us",
             "hz": 120
         }
     ]
