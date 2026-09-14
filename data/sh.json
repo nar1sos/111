@@ -2,38 +2,32 @@
     "name": "Slaughterhouse",
     "author": "icedcave and more",
     "creators": ["icedcave"],
-    "verifier": "Doggie",
+    "verifier": "SpaceUK",
     "country": "us",
     "verification": "https://www.youtube.com/watch?v=ooxNXR_QDMQ&list=PLJWYW0pwtKqc2Kp13nBYvui84FKTPxQb0&index=74",
     "percentToQualify": 40,
     "password": "Free Copy",
     "records": [
         {
-            "user": "NaR1",
+            "user": "Doggie",
             "link": "",
             "percent": 100,
-            "country": "ua",
+            "country": "us",
             "avatar": "https://i.pinimg.com/originals/b9/78/a2/b978a2def64d881e6fa1e54690691333.jpg",
             "hz": 120  
         },
         {
-            "user": "Kurumi",
+            "user": "Mizukii",
             "link": "",
             "percent": 100,
-            "country": "ru",
+            "country": "de",
             "hz": 120  
         },
         {
-            "user": "a6",
+            "user": "Zoink",
             "link": "",
             "percent": 100,
-            "country": "ru",
-            "hz": 120  
-        },
-        {
-            "user": "teraaa",
-            "link": "",
-            "percent": 100,
+            "country": "us",
             "hz": 120  
         }
     ]
