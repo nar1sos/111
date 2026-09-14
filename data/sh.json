@@ -36,6 +36,14 @@
             "percent": 100,
             "country": "us",
             "hz": 120  
+        },
+        {
+            "user": "Bacon",
+            "link": "",
+            "percent": 100,
+            "country": "kz",
+            "avatar": "https://static.wikia.nocookie.net/geometry-dash/images/d/dd/Bacon.jpg/revision/latest/thumbnail/width/360/height/360?cb=20260529154540&path-prefix=ru",
+            "hz": 120  
         }
     ]
 }
