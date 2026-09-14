@@ -1,525 +1,228 @@
 import { fetchLeaderboard } from "../content.js";
-
-const styles = `
-.leaderboard-wrapper {
-    display: flex;
-    flex-direction: row-reverse;
-    gap: 24px;
-    padding: 24px 32px;
-    width: 100%;
-    min-height: calc(100vh - 80px);
-    box-sizing: border-box;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    color: #ffffff;
-}
-
-.sidebar-list {
-    width: 380px;
-    flex-shrink: 0;
-    background: #0f141d;
-    border: 1px solid #1a2233;
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    height: fit-content;
-    max-height: 85vh;
-    overflow-y: auto;
-}
-
-.sidebar-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    border-radius: 8px;
-    background: #131924;
-    cursor: pointer;
-    font-size: 1.05rem;
-    transition: all 0.15s ease;
-    border: 1px solid transparent;
-}
-
-.sidebar-item:hover {
-    background: #1a2333;
-}
-
-.sidebar-item.active {
-    background: #1a253b;
-    border: 1px solid #283754;
-}
-
-.rank-num {
-    color: #3b82f6;
-    font-size: 0.95rem;
-    font-weight: 700;
-    width: 38px;
-}
-
-.user-block {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-grow: 1;
-}
-
-.avatar-mini {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-    background: #202b3d;
-    flex-shrink: 0;
-}
-
-.flag-img-mini {
-    width: 22px;
-    height: 15px;
-    object-fit: cover;
-    border-radius: 2px;
-    flex-shrink: 0;
-    box-shadow: 0 0 2px rgba(0,0,0,0.5);
-}
-
-.user-block .username {
-    font-weight: 700;
-    color: #ffffff;
-}
-
-.user-score {
-    color: #8b9bb4;
-    font-size: 0.95rem;
-    font-weight: 600;
-}
-
-.profile-card {
-    flex-grow: 1;
-    background: #0f141d;
-    border: 1px solid #1a2233;
-    border-radius: 12px;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-}
-
-.profile-title {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-}
-
-.avatar-large {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #283754;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    flex-shrink: 0;
-}
-
-.flag-img-large {
-    width: 38px;
-    height: 26px;
-    object-fit: cover;
-    border-radius: 4px;
-    flex-shrink: 0;
-    box-shadow: 0 0 4px rgba(0,0,0,0.6);
-}
-
-.profile-title h1 {
-    margin: 0;
-    font-size: 2.8rem;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-}
-
-.grid-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.card-stat {
-    background: #131926;
-    border: 1px solid #1e283d;
-    border-radius: 12px;
-    padding: 24px 28px;
-    display: flex;
-    align-items: center;
-    gap: 24px;
-}
-
-.card-stat .icon {
-    font-size: 2.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.card-stat .info {
-    display: flex;
-    flex-direction: column;
-}
-
-.card-stat .val {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #ffffff;
-    line-height: 1.1;
-}
-
-.card-stat .lbl {
-    font-size: 0.85rem;
-    color: #5d739c;
-    font-weight: 800;
-    letter-spacing: 1px;
-    margin-top: 6px;
-}
-
-.card-hardest {
-    background: #131926;
-    border: 1px solid #3d2325;
-    border-radius: 12px;
-    padding: 20px 24px;
-}
-
-.hardest-title {
-    color: #ff5252;
-    font-size: 1rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.hardest-value {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: #ffffff;
-    margin-top: 8px;
-}
-
-/* ОБЩИЕ СЕКЦИИ ДЛЯ СТАНДАРТНЫХ УРОВНЕЙ */
-.section-levels {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.section-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.section-top .title {
-    color: #ff5252;
-    font-size: 1.1rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.count-badge {
-    background: #1a2336;
-    color: #627ca8;
-    border-radius: 12px;
-    padding: 4px 12px;
-    font-size: 0.9rem;
-    font-weight: 700;
-}
-
-.pills-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
-.level-pill {
-    background: #141c2e;
-    border: 1px solid #202d4a;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 700;
-    color: #ffffff;
-    transition: background 0.15s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.level-pill:hover {
-    background: #1c2740;
-}
-
-.pill-percent {
-    color: #3b82f6;
-    font-weight: 800;
-}
-
-/* VERIFIED КАРТОЧКА */
-.verified-card {
-    background: #122125;
-    border-radius: 12px;
-    padding: 20px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.verified-card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.verified-card-title {
-    color: #20d38b;
-    font-size: 1.05rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.verified-count-badge {
-    background: #1c3237;
-    color: #9cb1b5;
-    border-radius: 12px;
-    padding: 3px 10px;
-    font-size: 0.85rem;
-    font-weight: 700;
-}
-
-.verified-pills-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 10px;
-}
-
-.verified-level-pill {
-    background: #0e171b;
-    border: 1.5px solid #1ba36a;
-    color: #d1e2e5;
-    padding: 6px 14px;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-    transition: all 0.15s ease;
-}
-
-.verified-level-pill:hover {
-    background: #142228;
-    border-color: #22c57d;
-    color: #ffffff;
-}
-`;
-
-if (!document.getElementById("leaderboard-styles-wide")) {
-    const styleSheet = document.createElement("style");
-    styleSheet.id = "leaderboard-styles-wide";
-    styleSheet.innerText = styles;
-    document.head.appendChild(styleSheet);
-}
+import Spinner from "../components/Spinner.js";
 
 export default {
+    components: { Spinner },
     template: `
-        <main v-if="loading" class="gdl-loading">
-            <p style="padding: 20px; text-align: center; color: #fff;">Загрузка данных...</p>
+        <main v-if="loading" class="leaderboard-wrapper">
+            <Spinner></Spinner>
         </main>
-
-        <main v-else class="leaderboard-wrapper">
-            <!-- СПИСОК ИГРОКОВ (СПРАВА) -->
-            <div class="sidebar-list">
-                <div 
-                    v-for="(player, i) in players" 
-                    :key="player.user"
-                    class="sidebar-item"
-                    :class="{ 'active': selectedUser === player.user }"
-                    @click="selectedUser = player.user"
-                >
-                    <span class="rank-num">#{{ i + 1 }}</span>
-                    <div class="user-block">
+        
+        <div v-else class="leaderboard-container">
+            <!-- ЛЕВАЯ КОЛОНКА: ПРОФИЛЬ -->
+            <div class="profile-card" v-if="selectedPlayer">
+                <!-- Аватарка -->
+                <div class="profile-header">
+                    <div class="avatar-ring">
                         <img 
-                            v-if="player.avatar" 
-                            :src="player.avatar" 
-                            class="avatar-mini" 
-                            @error="$event.target.style.display='none'"
+                            :src="getAvatarUrl(selectedPlayer)" 
+                            class="profile-avatar"
+                            @error="onAvatarError"
                         />
-                        
+                    </div>
+                    <!-- Имя с флагом СЛЕВА -->
+                    <div class="profile-title">
                         <img 
-                            v-if="player.nationality" 
-                            :src="getFlagUrl(player.nationality)" 
-                            class="flag-img-mini" 
-                            @error="$event.target.style.display='none'"
+                            v-if="getPlayerFlag(selectedPlayer)" 
+                            :src="getPlayerFlag(selectedPlayer)" 
+                            class="flag-img" 
+                            @error="onFlagError"
                         />
-
-                        <span class="username">{{ player.user }}</span>
+                        <h1>{{ selectedPlayer.user }}</h1>
                     </div>
-                    <span class="user-score">{{ formatScore(player.totalScore) }}</span>
-                </div>
-            </div>
-
-            <!-- ПРОФИЛЬ ИГРОКА (СЛЕВА) -->
-            <div class="profile-card" v-if="currentPlayer">
-                <div class="profile-title">
-                    <img 
-                        v-if="currentPlayer.avatar" 
-                        :src="currentPlayer.avatar" 
-                        class="avatar-large" 
-                        @error="$event.target.style.display='none'"
-                    />
-
-                    <img 
-                        v-if="currentPlayer.nationality" 
-                        :src="getFlagUrl(currentPlayer.nationality)" 
-                        class="flag-img-large" 
-                        @error="$event.target.style.display='none'"
-                    />
-
-                    <h1>{{ currentPlayer.user }}</h1>
                 </div>
 
-                <div class="grid-stats">
+                <!-- Статистика: RANK -->
+                <div class="single-stat-container">
                     <div class="card-stat">
-                        <span class="icon">🏆</span>
-                        <div class="info">
-                            <div class="val">#{{ currentRank }}</div>
-                            <div class="lbl">RANK</div>
-                        </div>
-                    </div>
-
-                    <div class="card-stat">
-                        <span class="icon">✦</span>
-                        <div class="info">
-                            <div class="val">{{ formatScore(currentPlayer.totalScore) }}</div>
-                            <div class="lbl">SCORE</div>
+                        <span class="stat-icon">🏆</span>
+                        <div class="stat-info">
+                            <span class="val">#{{ selectedRank }}</span>
+                            <span class="lbl">RANK</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="card-hardest" v-if="currentPlayer.hardest">
-                    <div class="hardest-title">🔥 Hardest level</div>
-                    <div class="hardest-value">#{{ currentPlayer.hardestRank }} {{ currentPlayer.hardest }}</div>
-                </div>
-
-                <!-- 1. MAIN LEVELS (100%) -->
-                <div class="section-levels" v-if="mainLevels.length">
-                    <div class="section-top">
-                        <span class="title">★ Main levels</span>
-                        <span class="count-badge">{{ mainLevels.length }}</span>
+                <!-- Hardest level -->
+                <div class="section-box hardest-box" v-if="selectedPlayer.hardest">
+                    <div class="box-title red-title">
+                        🔥 Hardest level
                     </div>
-                    <div class="pills-grid">
-                        <div v-for="rec in mainLevels" :key="rec.levelName" class="level-pill">
-                            {{ rec.levelName }}
-                        </div>
+                    <div class="hardest-name">
+                        {{ selectedPlayer.hardest }}
                     </div>
                 </div>
 
-                <!-- 2. PROGRESSES (МЕНЬШЕ 100%) -->
-                <div class="section-levels" v-if="progressLevels.length">
-                    <div class="section-top">
-                        <span class="title" style="color: #3b82f6;">📊 Progresses</span>
-                        <span class="count-badge">{{ progressLevels.length }}</span>
-                    </div>
-                    <div class="pills-grid">
-                        <div v-for="rec in progressLevels" :key="rec.levelName" class="level-pill">
-                            <span>{{ rec.levelName }}</span>
-                            <span class="pill-percent">({{ rec.percent }}%)</span>
+                <!-- Main levels -->
+                <div class="section-box" v-if="mainLevels.length">
+                    <div class="box-header">
+                        <div class="box-title red-title">
+                            ★ Main levels
                         </div>
+                        <span class="badge-count">{{ mainLevels.length }}</span>
                     </div>
-                </div>
-
-                <!-- 3. WHICH ARE VERIFIED (ПОСЛЕДНЯЯ КАТЕГОРИЯ) -->
-                <div class="verified-card" v-if="verifiedLevels.length">
-                    <div class="verified-card-top">
-                        <div class="verified-card-title">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                            </svg>
-                            <span>Which are verified</span>
-                        </div>
-                        <span class="verified-count-badge">{{ verifiedLevels.length }}</span>
-                    </div>
-                    <div class="verified-pills-grid">
-                        <div v-for="lvl in verifiedLevels" :key="lvl" class="verified-level-pill">
+                    <div class="pills-flex">
+                        <div 
+                            v-for="(lvl, idx) in mainLevels" 
+                            :key="idx" 
+                            class="pill-btn"
+                        >
                             {{ lvl }}
                         </div>
                     </div>
                 </div>
+
+                <!-- Progresses -->
+                <div class="section-box" v-if="progresses.length">
+                    <div class="box-header">
+                        <div class="box-title blue-title">
+                            📊 Progresses
+                        </div>
+                        <span class="badge-count">{{ progresses.length }}</span>
+                    </div>
+                    <div class="pills-flex">
+                        <div 
+                            v-for="(prog, idx) in progresses" 
+                            :key="idx" 
+                            class="pill-btn progress-pill"
+                        >
+                            {{ prog.levelName || prog }} <span v-if="prog.percent" class="blue-text">({{ prog.percent }}%)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Which are verified -->
+                <div class="section-box verified-box" v-if="verifiedLevels.length">
+                    <div class="box-header">
+                        <div class="box-title green-title">
+                            <span class="check-circle">✓</span> Which are verified
+                        </div>
+                        <span class="badge-count green-badge">{{ verifiedLevels.length }}</span>
+                    </div>
+                    <div class="pills-flex">
+                        <div 
+                            v-for="(ver, idx) in verifiedLevels" 
+                            :key="idx" 
+                            class="pill-btn verified-pill"
+                        >
+                            {{ ver.levelName || ver }}
+                        </div>
+                    </div>
+                </div>
             </div>
-        </main>
+
+            <!-- ПРАВАЯ КОЛОНКА: СПИСОК ИГРОКОВ -->
+            <div class="sidebar-list">
+                <div 
+                    v-for="(player, index) in leaderboard" 
+                    :key="player.user || index"
+                    class="sidebar-item"
+                    :class="{ 'active': selectedPlayer?.user === player.user }"
+                    @click="selectedPlayer = player"
+                >
+                    <span class="rank-num">#{{ index + 1 }}</span>
+                    
+                    <div class="user-block">
+                        <img 
+                            :src="getAvatarUrl(player)" 
+                            class="list-avatar" 
+                            @error="onAvatarError"
+                        />
+                        <img 
+                            v-if="getPlayerFlag(player)" 
+                            :src="getPlayerFlag(player)" 
+                            class="list-flag-img" 
+                            @error="onFlagError"
+                        />
+                        <span class="username">{{ player.user }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     `,
 
     data: () => ({
-        players: [],
-        selectedUser: null,
-        loading: true
+        leaderboard: [],
+        loading: true,
+        selectedPlayer: null,
+        defaultAvatar: 'https://i.imgur.com/6VBx3io.png'
     }),
 
     computed: {
-        currentPlayer() {
-            if (!this.players.length) return null;
-            return this.players.find(p => p.user === this.selectedUser) || this.players[0];
+        selectedRank() {
+            if (!this.selectedPlayer || !this.leaderboard.length) return '-';
+            const index = this.leaderboard.findIndex(p => p.user === this.selectedPlayer.user);
+            return index !== -1 ? index + 1 : '-';
         },
-
-        currentRank() {
-            if (!this.currentPlayer) return 0;
-            return this.players.findIndex(p => p.user === this.currentPlayer.user) + 1;
-        },
-
-        verifiedLevels() {
-            if (!this.currentPlayer || !this.currentPlayer.verified) return [];
-            return this.currentPlayer.verified;
-        },
-
         mainLevels() {
-            if (!this.currentPlayer || !this.currentPlayer.records) return [];
-            return this.currentPlayer.records.filter(r => Number(r.percent) === 100);
-        },
+            if (!this.selectedPlayer) return [];
+            
+            const records = (this.selectedPlayer.records || [])
+                .filter(r => typeof r === 'string' || !r.percent || r.percent === 100)
+                .map(r => typeof r === 'string' ? r : r.levelName);
+                
+            const verified = (this.selectedPlayer.verified || [])
+                .map(v => typeof v === 'string' ? v : v.levelName);
 
-        progressLevels() {
-            if (!this.currentPlayer || !this.currentPlayer.records) return [];
-            return this.currentPlayer.records.filter(r => Number(r.percent) < 100);
+            return [...new Set([...records, ...verified])];
+        },
+        progresses() {
+            if (!this.selectedPlayer?.records) return [];
+            return this.selectedPlayer.records.filter(r => typeof r === 'object' && r.percent && r.percent < 100);
+        },
+        verifiedLevels() {
+            if (!this.selectedPlayer) return [];
+            return this.selectedPlayer.verified || [];
         }
     },
 
     async mounted() {
-        try {
-            this.loading = true;
-            const res = await fetchLeaderboard();
-            this.players = Array.isArray(res) ? res : [];
-            if (this.players.length > 0) {
-                this.selectedUser = this.players[0].user;
-            }
-        } catch (e) {
-            console.error("Ошибка загрузки лидерборда:", e);
-            this.players = [];
-        } finally {
-            this.loading = false;
+        const data = await fetchLeaderboard();
+        this.leaderboard = Array.isArray(data) ? data : [];
+        if (this.leaderboard.length > 0) {
+            this.selectedPlayer = this.leaderboard[0];
         }
+        this.loading = false;
     },
 
     methods: {
-        formatScore(val) {
-            if (!val && val !== 0) return '0';
-            const parts = Number(val).toFixed(3).split('.');
-            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-            return parts.join(',');
+        getPlayerFlag(player) {
+            if (!player) return null;
+
+            let raw = player.country || player.nationality || player.nation;
+
+            if (!raw && Array.isArray(player.records)) {
+                for (const rec of player.records) {
+                    if (rec && typeof rec === 'object' && (rec.country || rec.nationality || rec.nation)) {
+                        raw = rec.country || rec.nationality || rec.nation;
+                        break;
+                    }
+                }
+            }
+
+            if (!raw) return null;
+
+            let code = String(raw).trim().toLowerCase();
+
+            if (code.startsWith('http') || code.startsWith('/')) {
+                return raw;
+            }
+
+            return `https://flagcdn.com/w40/${code.slice(0, 2)}.png`;
         },
 
-        getFlagUrl(countryCode) {
-            if (!countryCode) return '';
-            if (countryCode.startsWith('http://') || countryCode.startsWith('https://')) {
-                return countryCode;
-            }
-            return `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`;
+        getAvatarUrl(player) {
+            if (player?.avatar) return player.avatar;
+            if (player?.icon) return player.icon;
+            return `https://github.com/${player?.user || 'ghost'}.png`;
+        },
+
+        onAvatarError(e) {
+            e.target.src = this.defaultAvatar;
+        },
+
+        onFlagError(e) {
+            e.target.style.display = 'none';
         }
     }
 };
