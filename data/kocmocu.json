@@ -1,55 +1,13 @@
 {
-    "name": "KOCMOC UNLEASHED",
+    "name": "KOCMOC",
     "author": "cherry",
     "creators": ["nar1"],
     "verifier": "a6",
-    "verification": "https://www.youtube.com/watch?v=H6v5U_yT2cU",
+    "verification": "https://www.youtube.com/watch?v=2m0BYw5ykiU&list=PL1PhLQ-6eJ6-l_QC3E6Jy1PgPdXPm3p2w&index=25",
     "percentToQualify": 40,
-    "avatar": "https://yt3.googleusercontent.com/N76N33crDK5a7qsmio20schIRvyD-_qyEkTJfOsPZ87VLIO7UVXR2JpCCknbb8984YNoYTMT5Q=s160-c-k-c0x00ffffff-no-rj",
-    "country": "ru",
     "password": "Free Copy",
     "records": [
         {
-            "user": "Kurumi",
-            "link": "",
-            "percent": 100,
-            "country": "ru",
-            "hz": 120  
-        },
-        {
-            "user": "teraaa",
-            "link": "",
-            "percent": 100,
-            "country": "kz",
-            "hz": 120  
-        },
-        {
-            "user": "Mizukii",
-            "link": "",
-            "percent": 100,
-            "country": "de",
-            "hz": 120  
-        },
-        {
-            "user": "Zoink",
-            "link": "",
-            "percent": 100,
-            "country": "us",
-            "hz": 120  
-        },
-        {
-            "user": "Doggie",
-            "link": "",
-            "percent": 58,
-            "country": "us",
-            "hz": 120  
-        },
-        {
-            "user": "NaR1",
-            "link": "",
-            "percent": 100,
-            "country": "ua",
-            "hz": 120  
         }
     ]
 }
