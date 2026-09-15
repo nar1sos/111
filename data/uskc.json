@@ -1,17 +1,13 @@
 {
     "name": "Unnerfed Sakupen Circles",
-    "author": "icedcave",
-    "creators": ["icedcave"],
-    "verifier": "Bacon",
+    "author": "...",
+    "creators": ["..."],
+    "verifier": "NaR1",
     "verification": "https://www.youtube.com/watch?v=_ea8mbSfZvA",
     "percentToQualify": 40,
     "password": "Free Copy",
     "records": [
         {
-            "user": "NaR1",
-            "link": "",
-            "percent": 100,
-            "hz": 120
         }
     ]
 }
