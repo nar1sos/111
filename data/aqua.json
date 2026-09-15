@@ -8,6 +8,10 @@
     "password": "Free Copy",
     "records": [
         {
+            "user": "Cursed",
+            "link": "",
+            "percent": 100,
+            "hz": 120  
         }
     ]
 }
