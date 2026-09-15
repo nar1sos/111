@@ -1,17 +1,13 @@
 {
     "name": "Tidal Wave",
-    "author": "Pryemishi Team",
-    "creators": ["nar1"],
-    "verifier": "Zoink",
+    "author": "...",
+    "creators": ["..."],
+    "verifier": "NaR1",
     "verification": "https://www.youtube.com/watch?v=wdK7JTw24l0&list=PLw-NqhGbKD7ec7UlSM8427H-a1i9dJhHV&index=6",
     "percentToQualify": 40,
     "password": "Free Copy",
     "records": [
         {
-            "user": "a6",
-            "link": "",
-            "percent": 100,
-            "hz": 60
         }
     ]
 }
