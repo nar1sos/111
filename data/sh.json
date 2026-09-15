@@ -2,66 +2,12 @@
     "name": "Slaughterhouse",
     "author": "icedcave and more",
     "creators": ["icedcave"],
-    "verifier": "SpaceUK",
-    "country": "us",
+    "verifier": "NaR1",
     "verification": "https://www.youtube.com/watch?v=ooxNXR_QDMQ&list=PLJWYW0pwtKqc2Kp13nBYvui84FKTPxQb0&index=74",
     "percentToQualify": 40,
     "password": "Free Copy",
     "records": [
         {
-            "user": "Doggie",
-            "link": "",
-            "percent": 100,
-            "country": "us",
-            "avatar": "https://i.pinimg.com/originals/b9/78/a2/b978a2def64d881e6fa1e54690691333.jpg",
-            "hz": 120  
-        },
-        {
-            "user": "Mizukii",
-            "link": "",
-            "percent": 100,
-            "country": "de",
-            "hz": 120  
-        },
-        {
-            "user": "Zoink",
-            "link": "",
-            "percent": 100,
-            "country": "us",
-            "hz": 120  
-        },
-        {
-            "user": "Cursed",
-            "link": "",
-            "percent": 100,
-            "country": "us",
-            "hz": 120  
-        },
-        {
-            "user": "Bacon",
-            "link": "",
-            "percent": 100,
-            "country": "kz",
-            "avatar": "https://static.wikia.nocookie.net/geometry-dash/images/d/dd/Bacon.jpg/revision/latest/thumbnail/width/360/height/360?cb=20260529154540&path-prefix=ru",
-            "hz": 120  
-        },
-        {
-            "user": "w3rty",
-            "link": "",
-            "percent": 100,
-            "hz": 120  
-        },
-        {
-            "user": "wPopoff",
-            "link": "",
-            "percent": 100,
-            "hz": 120  
-        },
-        {
-            "user": "NaR1",
-            "link": "",
-            "percent": 100,
-            "hz": 120  
         }
     ]
 }
