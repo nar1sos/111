@@ -1,59 +1,13 @@
 {
-    "name": "Acheron",
-    "author": "icedcave",
-    "creators": ["icedcave"],
-    "verifier": "Zoink",
-    "verification": "https://www.youtube.com/watch?v=5fqciPrucTc&list=PL_nCo7lqvVUDha6_mBw36yaTLA1j7KyWZ&index=22",
+    "name": "Ordinary",
+    "author": "...",
+    "creators": ["..."],
+    "verifier": "NaR1",
+    "verification": "https://www.youtube.com/watch?v=4QiHP3jpGnk",
     "percentToQualify": 40,
     "password": "Free Copy",
     "records": [
         {
-            "user": "Bacon",
-            "link": "",
-            "percent": 100,
-            "hz": 120
-        },
-        {
-            "user": "SpaceUK",
-            "link": "",
-            "percent": 100,
-            "hz": 120
-        },
-        {
-            "user": "Doggie",
-            "link": "",
-            "percent": 100,
-            "hz": 120
-        },
-        {
-            "user": "Cursed",
-            "link": "",
-            "percent": 100,
-            "hz": 120
-        },
-        {
-            "user": "w3rty",
-            "link": "",
-            "percent": 100,
-            "hz": 120
-        },
-        {
-            "user": "Trick",
-            "link": "",
-            "percent": 100,
-            "hz": 120
-        },
-        {
-            "user": "wPopoff",
-            "link": "",
-            "percent": 100,
-            "hz": 120
-        },
-        {
-            "user": "SerVax",
-            "link": "",
-            "percent": 100,
-            "hz": 120
         }
     ]
 }
