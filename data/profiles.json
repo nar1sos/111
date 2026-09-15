@@ -26,5 +26,21 @@
   "Kurumi": {
     "avatar": "https://storage.sticker-collection.com/stickers/plain/hutakuttfuck/512/a4f29547-a771-4814-977b-1114498d3708file_3210999.webp",
     "nationality": "ru"
+  },
+  "SerVax": {
+    "avatar": "https://static.wikia.nocookie.net/geometry-dash/images/7/79/SerVax_profile.jpg/revision/latest?cb=20250729114842&path-prefix=ru",
+    "nationality": "am"
+  },
+  "w3rty": {
+    "avatar": "https://static.wikia.nocookie.net/geometry-dash/images/3/31/W3rty_profile.jpg/revision/latest?cb=20250729115605&path-prefix=ru",
+    "nationality": "ru"
+  },
+  "wPopof": {
+    "avatar": "https://static.wikia.nocookie.net/geometry-dash-fan/images/b/b4/WPop.png/revision/latest?cb=20250216113846",
+    "nationality": "us"
+  },
+  "Trick": {
+    "avatar": "https://static.wikia.nocookie.net/geometry-dash/images/3/32/Trick.jpg/revision/latest?cb=20250813142647&path-prefix=ru",
+    "nationality": "us"
   }
 }
