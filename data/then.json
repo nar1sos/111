@@ -1,0 +1,36 @@
+{
+    "name": "The nightmare",
+    "author": "...",
+    "creators": ["..."],
+    "verifier": "Egori4",
+    "verification": "https://www.youtube.com/watch?v=IGc9D5rH3f8",
+    "percentToQualify": 40,
+    "password": "Free Copy",
+    "records": [
+        {
+            "user": "L1steN",
+            "link": "",
+            "percent": 100,
+            "country": "ru",
+            "hz": 240
+        },
+        {
+            "user": "NaR1",
+            "link": "",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Shmerlo",
+            "link": "",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "mursa1r",
+            "link": "",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}
