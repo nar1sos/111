@@ -1,0 +1,23 @@
+{
+    "name": "Skeletal Shenanigans",
+    "author": "...",
+    "creators": ["..."],
+    "verifier": "Shmerlo",
+    "verification": "https://www.youtube.com/watch?v=IOkGkvUm4c8",
+    "percentToQualify": 40,
+    "password": "Free Copy",
+    "records": [
+        {
+            "user": "L1steN",
+            "link": "",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "NaR1",
+            "link": "",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}
